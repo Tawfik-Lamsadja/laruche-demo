@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur de paiement — La Ruche</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16100B; --ink:#F2E8D8; --ink-soft:#C7B49B; --accent:#C9812E; --gold:#D9A94A;
+    --line:#3A2C1E; --card:#221A11; --warn:#8A3A1E;
+    --font-display:'Playfair Display', serif; --font-body:'Work Sans', sans-serif; --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .box{ width:100%; max-width:420px; }
+  .banner{
+    background:var(--warn); color:#fff; font-family:var(--font-mono); font-size:0.75rem;
+    text-align:center; padding:10px 14px; border-radius:4px; margin-bottom:22px; letter-spacing:.03em;
+  }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:6px; padding:32px 28px; }
+  h1{ font-family:var(--font-display); font-style:italic; font-weight:600; font-size:1.4rem; margin:0 0 6px; }
+  .desc{ color:var(--ink-soft); font-size:0.9rem; margin:0 0 26px; }
+  .amount{ font-family:var(--font-display); font-weight:700; font-size:2.4rem; color:var(--accent); margin:0 0 26px; }
+  .row{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  button{
+    font-family:var(--font-body); font-weight:600; font-size:0.95rem; padding:14px 20px;
+    border-radius:4px; border:1px solid transparent; cursor:pointer; flex:1; min-width:160px;
+  }
+  .btn-pay{ background:var(--accent); color:#1A1109; }
+  .btn-pay:hover{ background:var(--gold); }
+  .btn-cancel{ background:transparent; border-color:var(--line); color:var(--ink-soft); }
+  .btn-cancel:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  .foot{ font-family:var(--font-mono); font-size:0.7rem; color:var(--ink-soft); opacity:.7; margin-top:22px; text-align:center; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="banner">⚠ SIMULATEUR — AUCUN PAIEMENT RÉEL, MODE DÉMONSTRATION</div>
+    <div class="card">
+      <h1>Confirmer le paiement</h1>
+      <p class="desc" id="desc">Chargement…</p>
+      <p class="amount" id="amount">—</p>
+      <div class="row">
+        <button class="btn-pay" id="payBtn">Simuler un paiement réussi</button>
+      </div>
+      <div class="row">
+        <button class="btn-cancel" id="cancelBtn">Simuler une annulation</button>
+      </div>
+    </div>
+    <p class="foot">Cette page remplace temporairement Mollie tant qu'aucun compte professionnel n'est actif. Elle sera désactivée dès que La Ruche disposera d'un vrai compte Mollie.</p>
+  </div>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var amount = params.get('amount') || '0.00';
+  var ref = params.get('ref') || 'DEMO';
+  var successUrl = params.get('success_url');
+  var cancelUrl = params.get('cancel_url') || successUrl;
+  var kind = params.get('kind') === 'giftcard' ? 'bon cadeau' : 'réservation';
+
+  document.getElementById('desc').textContent = 'La Ruche — Acompte ' + kind + ' (réf. ' + ref + ')';
+  document.getElementById('amount').textContent = amount + '€';
+
+  document.getElementById('payBtn').addEventListener('click', function(){
+    if(successUrl){ window.location.href = successUrl; }
+  });
+  document.getElementById('cancelBtn').addEventListener('click', function(){
+    if(cancelUrl){ window.location.href = cancelUrl; }
+  });
+})();
+</script>
+</body>
+</html>
