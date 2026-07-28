@@ -397,6 +397,29 @@ input:focus, select:focus, textarea:focus{ border-color: var(--accent); }
 .event-perks li{ display:flex; gap: 12px; align-items:flex-start; color: var(--ink-soft); font-size: 0.95rem; }
 .event-perks li::before{ content:'◆'; color: var(--accent); font-size: 0.7rem; margin-top: 5px; }
 
+/* ---------- Fenêtre de confirmation (retour de paiement) ---------- */
+.confirm-overlay{
+  position: fixed; inset: 0; z-index: 200; background: rgba(22,16,11,.92);
+  display: none; align-items: center; justify-content: center; padding: 24px;
+  opacity: 0; transition: opacity .35s var(--ease);
+}
+.confirm-overlay.is-visible{ display: flex; opacity: 1; }
+.confirm-card{
+  background: var(--card); border: 1px solid var(--gold); border-radius: 8px;
+  padding: 46px 38px; max-width: 440px; width: 100%; text-align: center;
+  box-shadow: 0 40px 80px -30px rgba(0,0,0,.7);
+  transform: translateY(14px); transition: transform .4s var(--ease);
+}
+.confirm-overlay.is-visible .confirm-card{ transform: translateY(0); }
+.confirm-icon{
+  width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; color: #1A1109;
+}
+.confirm-card h3{ font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 1.55rem; margin: 0 0 14px; }
+.confirm-card p{ color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; margin: 0 0 22px; }
+.confirm-ref{ font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-soft); opacity: .75; margin: 0 0 28px; }
+
 /* ---------- Footer ---------- */
 footer{ border-top: 1px solid var(--line); padding: 40px 0; }
 .footer-row{ display:flex; justify-content: space-between; align-items:center; flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--ink-soft); }
@@ -813,6 +836,34 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
 </script>
 
 <script>
+  /* ===================================================================
+     Fenêtre de confirmation partagée (réservation + bons cadeaux).
+     Déclarée hors IIFE pour être appelable depuis les autres scripts.
+     =================================================================== */
+  var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmTitle = document.getElementById('confirmTitle');
+  var confirmMessage = document.getElementById('confirmMessage');
+  var confirmRef = document.getElementById('confirmRef');
+  var confirmCloseBtn = document.getElementById('confirmCloseBtn');
+
+  function showConfirmModal(opts){
+    confirmTitle.textContent = opts.title;
+    confirmMessage.textContent = opts.message;
+    confirmRef.textContent = opts.ref ? 'Référence : ' + opts.ref : '';
+    confirmOverlay.classList.add('is-visible');
+  }
+
+  confirmCloseBtn.addEventListener('click', function(){
+    confirmOverlay.classList.remove('is-visible');
+    // Nettoie l'URL (?booking=...&status=merci) pour qu'un rechargement
+    // de la page ne rouvre pas la modale.
+    var cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState(null, '', cleanUrl);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+<script>
 (function(){
   /* ===================================================================
      RÉSERVATION INTERACTIVE — données de démo.
@@ -1014,9 +1065,12 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
   (function checkPaymentReturn(){
     var params = new URLSearchParams(window.location.search);
     if(params.get('status') === 'merci' && params.get('booking')){
-      summaryText.innerHTML = '✓ Réservation confirmée — référence ' + params.get('booking') + '.<br><span style="font-size:0.85rem;opacity:.8;">Un email de confirmation vous a été envoyé.</span>';
       bookingForm.hidden = true;
-      document.getElementById('reservation').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showConfirmModal({
+        title: 'À bientôt !',
+        message: 'Votre table est réservée. Vous recevrez un email de confirmation avec tous les détails.',
+        ref: params.get('booking')
+      });
     }
   })();
   // Le retour "bon cadeau" (?gift=...&status=merci) est géré plus bas,
@@ -1115,8 +1169,11 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
   (function checkGiftReturn(){
     var params = new URLSearchParams(window.location.search);
     if(params.get('status') === 'merci' && params.get('gift')){
-      giftForm.innerHTML = '<p style="font-size:0.95rem;">✓ <strong>Merci !</strong> Votre bon cadeau (réf. ' + params.get('gift') + ') a bien été payé — il sera envoyé par email au destinataire.</p>';
-      document.getElementById('cadeaux').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showConfirmModal({
+        title: 'Merci !',
+        message: 'Votre bon cadeau a bien été payé. Il sera envoyé par email au destinataire.',
+        ref: params.get('gift')
+      });
     }
   })();
 
@@ -1189,6 +1246,16 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
   });
 })();
 </script>
+
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-card">
+    <div class="confirm-icon">✓</div>
+    <h3 id="confirmTitle">À bientôt !</h3>
+    <p id="confirmMessage"></p>
+    <p class="confirm-ref" id="confirmRef"></p>
+    <button type="button" class="btn btn-primary" id="confirmCloseBtn">Retour à l'accueil</button>
+  </div>
+</div>
 
 </body>
 </html>
