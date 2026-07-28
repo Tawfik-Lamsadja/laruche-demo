@@ -2,25 +2,29 @@
    POST /api/create-payment
    Point d'entrée unique pour tout paiement Mollie du site : l'acompte
    de réservation ET les bons cadeaux, distingués par req.body.type.
-   Renvoie l'URL de checkout Mollie vers laquelle rediriger le client.
+   Renvoie l'URL de checkout vers laquelle rediriger le client.
 
-   Variable d'environnement requise : MOLLIE_API_KEY
-   (à définir dans les "Application settings" de la Static Web App
-   sur le portail Azure — jamais commitée dans le repo).
+   Variable d'environnement requise en fonctionnement normal :
+   MOLLIE_API_KEY (Application settings de la Static Web App, jamais
+   commitée dans le repo).
+
+   MODE DÉMO — DEMO_MODE=true
+   Tant que La Ruche n'a pas de compte Mollie professionnel (KBO/TVA
+   requis même en mode test), cette variable bascule vers un simulateur
+   local (/mock-checkout.html) au lieu d'appeler la vraie API Mollie.
+   Volontairement verrouillé derrière une variable SÉPARÉE de
+   MOLLIE_API_KEY : l'absence de clé Mollie seule ne suffit jamais à
+   activer la simulation, pour éviter qu'un oubli de configuration en
+   prod ne fasse passer un vrai client par un faux paiement. Pour
+   repasser en réel : retirer DEMO_MODE et renseigner MOLLIE_API_KEY.
    =================================================================== */
 module.exports = async function (context, req) {
   try {
     const body = req.body || {};
     const type = body.type === "giftcard" ? "giftcard" : "reservation";
-
-    const apiKey = process.env.MOLLIE_API_KEY;
-    if (!apiKey) {
-      context.log.error("MOLLIE_API_KEY absente des variables d'environnement.");
-      context.res = { status: 500, body: { error: "Configuration de paiement manquante côté serveur." } };
-      return;
-    }
-
+    const demoMode = process.env.DEMO_MODE === "true";
     const origin = req.headers.origin || `https://${req.headers.host}`;
+
     let payload;
 
     if (type === "giftcard") {
@@ -79,6 +83,34 @@ module.exports = async function (context, req) {
       };
     }
 
+    const ref = payload.metadata.bookingRef || payload.metadata.giftRef;
+
+    // ---- MODE DÉMO : simulateur local, aucun appel à Mollie ----
+    if (demoMode) {
+      context.log.info(`[DEMO_MODE] Paiement simulé — ${ref} — ${payload.amount.value}€`);
+      const mockParams = new URLSearchParams({
+        amount: payload.amount.value,
+        ref: ref,
+        kind: type,
+        success_url: payload.redirectUrl,
+        cancel_url: `${origin}/`
+      });
+      context.res = {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: { checkoutUrl: `${origin}/mock-checkout.html?${mockParams.toString()}`, ref }
+      };
+      return;
+    }
+
+    // ---- MODE RÉEL : vrai paiement Mollie ----
+    const apiKey = process.env.MOLLIE_API_KEY;
+    if (!apiKey) {
+      context.log.error("MOLLIE_API_KEY absente des variables d'environnement.");
+      context.res = { status: 500, body: { error: "Configuration de paiement manquante côté serveur." } };
+      return;
+    }
+
     const mollieRes = await fetch("https://api.mollie.com/v2/payments", {
       method: "POST",
       headers: {
@@ -108,7 +140,7 @@ module.exports = async function (context, req) {
     context.res = {
       status: 200,
       headers: { "Content-Type": "application/json" },
-      body: { checkoutUrl: data._links.checkout.href, ref: payload.metadata.bookingRef || payload.metadata.giftRef }
+      body: { checkoutUrl: data._links.checkout.href, ref }
     };
   } catch (err) {
     context.log.error("Erreur create-payment:", err);
