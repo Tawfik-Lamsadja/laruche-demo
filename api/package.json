@@ -1,0 +1,6 @@
+{
+  "name": "laruche-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Azure Functions (managées par Static Web Apps) — création et confirmation des paiements Mollie pour La Ruche."
+}

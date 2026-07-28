@@ -110,7 +110,7 @@ header{
 .nav{ display:flex; align-items:center; justify-content: space-between; padding: 18px 0; }
 .logo{ font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; text-decoration:none; letter-spacing: .01em; }
 .logo span{ color: var(--accent); }
-.nav-links{ display:flex; gap: 32px; list-style:none; margin:0; padding:0; font-size: 0.92rem; }
+.nav-links{ display:flex; gap: 24px; flex-wrap: wrap; list-style:none; margin:0; padding:0; font-size: 0.9rem; }
 .nav-links a{ text-decoration:none; color: var(--ink-soft); position:relative; }
 .nav-links a::after{ content:''; position:absolute; left:0; bottom:-4px; height:1px; width:0; background: var(--accent); transition: width .3s var(--ease); }
 .nav-links a:hover{ color: var(--ink); }
@@ -159,6 +159,7 @@ body.hero-play .hero-actions{ animation: fadeUp .8s var(--ease) .7s forwards; }
 .btn-ghost:hover{ background: var(--gold); color: var(--bg); }
 
 .hero-figure-wrap{ margin-top: 60px; overflow: hidden; }
+.figure-caption{ font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: .04em; text-transform: uppercase; }
 .hero-figure{
   aspect-ratio: 16/7;
   background:
@@ -205,6 +206,7 @@ section{ padding: 96px 0; }
   transition: transform .35s var(--ease);
 }
 .dish:hover .dish-hex{ transform: scale(1.04); }
+.dish-mono{ font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--gold); }
 .dish h3{ font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; margin: 0 0 10px; }
 .dish p{ color: var(--ink-soft); font-size: 0.92rem; margin:0; }
 
@@ -319,27 +321,81 @@ input:focus, select:focus, textarea:focus{ border-color: var(--accent); }
 .booking-form{ margin-top:20px; display:flex; flex-direction:column; gap:16px; }
 
 /* ---------- Fidélité ---------- */
-.loyalty-card{ background: var(--card); border:1px solid var(--line); padding:28px; border-radius: var(--radius); margin-bottom: 28px; max-width: 560px; }
-.loyalty-stamps{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
-.stamp{ width:32px; height:32px; border-radius:50%; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; }
-.stamp.is-filled{ background: var(--accent); border-color: var(--accent); }
-.stamp.is-filled::after{ content:'✓'; color:#1A1109; font-size:0.85rem; font-weight:700; }
-.loyalty-status{ font-family: var(--font-mono); font-size:0.85rem; color: var(--ink-soft); margin:0; }
-.loyalty-form{ display:flex; gap:12px; flex-wrap:wrap; max-width:460px; }
-.loyalty-form input{ flex:1; min-width:200px; font-family: var(--font-body); font-size:0.95rem; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); color:var(--ink); }
-.loyalty-form input:focus{ border-color: var(--accent); }
+.loyalty-grid{ display:grid; grid-template-columns: 340px 1fr; gap: 52px; align-items:center; }
+@media (max-width: 860px){ .loyalty-grid{ grid-template-columns: 1fr; gap: 36px; } }
+
+.loyalty-card{
+  position: relative; aspect-ratio: 1.6/1; border-radius: 10px; padding: 26px 24px;
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(217,169,74,.35), transparent 55%),
+    linear-gradient(155deg, var(--accent-2) 0%, #2A1408 65%, #1A0F07 100%);
+  border: 1px solid var(--gold); overflow: hidden;
+  box-shadow: 0 30px 50px -30px rgba(0,0,0,.6);
+}
+.loyalty-card::before{
+  content:''; position:absolute; inset:0; opacity:.14; pointer-events:none;
+  background-image: repeating-linear-gradient(120deg, transparent 0 34px, var(--gold) 34px 35px);
+}
+.loyalty-card-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+.loyalty-card-brand{ font-family: var(--font-display); font-style: italic; font-weight:600; font-size:1.15rem; color: var(--ink); }
+.loyalty-card-brand span{ color: var(--gold); }
+.loyalty-chip{ width:36px; height:26px; border-radius:4px; background: linear-gradient(135deg,#E8CE8A,#B8933F); }
+.loyalty-card-mid{ margin-top: 30px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); letter-spacing:.08em; }
+.loyalty-card-name{ font-family: var(--font-body); font-size: 1rem; color: var(--ink); margin-top: 4px; }
+.loyalty-card-bottom{ position:absolute; left:24px; right:24px; bottom:20px; display:flex; justify-content:space-between; align-items:flex-end; }
+.loyalty-progress-label{ font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; }
+.loyalty-progress-num{ font-family: var(--font-display); font-size: 1.6rem; color: var(--gold); }
+
+.stamp-row{ display:flex; gap:10px; flex-wrap:wrap; margin: 22px 0; }
+.stamp{
+  width:46px; height:52px; display:flex; align-items:center; justify-content:center;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: var(--card); border: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);
+  transition: background .3s var(--ease), transform .25s var(--ease), color .3s;
+}
+.stamp.is-filled{ background: var(--accent); color: #1A1109; font-weight: 700; }
+.stamp.is-pop{ animation: stampPop .5s var(--ease); }
+@keyframes stampPop{ 0%{ transform: scale(.5); opacity:0; } 65%{ transform: scale(1.18); } 100%{ transform: scale(1); opacity:1; } }
+.loyalty-reward{ font-size: 0.95rem; color: var(--ink-soft); margin: 4px 0 20px; }
+.loyalty-reward strong{ color: var(--gold); }
+.loyalty-hint{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); opacity: .75; margin-top: 14px; }
 
 /* ---------- Bons cadeaux ---------- */
-.giftcard-box{ background: var(--card); border:1px solid var(--line); padding:28px; border-radius: var(--radius); max-width: 640px; }
-.giftcard-amounts{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:24px; }
-.amount-btn{ font-family: var(--font-mono); font-size:0.9rem; padding:10px 20px; border:1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: var(--radius); cursor:pointer; transition: all .2s; }
-.amount-btn:hover{ border-color: var(--accent); }
-.amount-btn.is-selected{ background: var(--accent); border-color: var(--accent); color:#1A1109; font-weight:600; }
-#customAmount{ max-width:160px; font-family: var(--font-body); font-size:0.9rem; padding:10px 14px; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg); color:var(--ink); }
-.gift-form{ display:flex; flex-direction:column; gap:16px; }
+.gift-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+@media (max-width: 760px){ .gift-grid{ grid-template-columns: repeat(2, 1fr); } }
+.gift-card{
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 30px 18px; text-align:center; cursor:pointer;
+  transition: transform .3s var(--ease), border-color .3s, background .3s;
+}
+.gift-card:hover{ transform: translateY(-4px); }
+.gift-card.is-selected{
+  border-color: var(--accent);
+  background: linear-gradient(160deg, rgba(201,129,46,.18), var(--card) 70%);
+}
+.gift-amount{ font-family: var(--font-display); font-weight:700; font-size: 2rem; color: var(--accent); margin: 0 0 8px; }
+.gift-label{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing:.05em; }
+.gift-custom-input{
+  width: 90px; text-align:center; margin: 6px auto 0; padding: 6px 8px; font-size:0.95rem;
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink);
+}
+.gift-form{ max-width: 560px; }
+.gift-trust{ font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft); opacity: .8; margin-top: 14px; }
 
-/* ---------- Privatisation ---------- */
-.privatisation-form{ max-width: 640px; display:flex; flex-direction:column; gap:16px; }
+/* ---------- Événements privés ---------- */
+.event-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+@media (max-width: 800px){ .event-grid{ grid-template-columns: 1fr; gap: 36px; } }
+.event-types{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom: 18px; }
+.event-type{
+  font-family: var(--font-body); font-size: 0.9rem; padding: 12px 18px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  color: var(--ink-soft); cursor:pointer; transition: all .25s var(--ease);
+}
+.event-type.is-selected{ border-color: var(--accent); color: var(--ink); background: rgba(201,129,46,.14); }
+.event-perks{ list-style:none; margin: 0; padding: 0; display:flex; flex-direction:column; gap: 16px; }
+.event-perks li{ display:flex; gap: 12px; align-items:flex-start; color: var(--ink-soft); font-size: 0.95rem; }
+.event-perks li::before{ content:'◆'; color: var(--accent); font-size: 0.7rem; margin-top: 5px; }
 
 /* ---------- Footer ---------- */
 footer{ border-top: 1px solid var(--line); padding: 40px 0; }
@@ -376,9 +432,10 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
     <a href="#" class="logo">La <span>Ruche</span></a>
     <ul class="nav-links">
       <li><a href="#menu">Menu</a></li>
-      <li><a href="#fidelite">Fidélité</a></li>
-      <li><a href="#cadeaux">Bons cadeaux</a></li>
+      <li><a href="#histoire">Notre histoire</a></li>
       <li><a href="#galerie">La salle</a></li>
+      <li><a href="#fidelite">Fidélité</a></li>
+      <li><a href="#cadeaux">Cadeaux</a></li>
       <li><a href="#reservation">Réservation</a></li>
     </ul>
     <a href="#reservation" class="nav-cta">Réserver une table</a>
@@ -401,7 +458,7 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
   </div>
   <div class="wrap">
     <div class="hero-figure-wrap">
-      <div class="hero-figure">[ photo de la salle ou d'une pièce en maturation — 1800×800 ]</div>
+      <div class="hero-figure"><span class="figure-caption">La salle &amp; la chambre de maturation</span></div>
     </div>
   </div>
 </section>
@@ -423,17 +480,17 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
     </div>
     <div class="grid-3">
       <div class="dish" data-reveal data-d="0">
-        <div class="dish-hex">[ photo ]</div>
+        <div class="dish-hex"><span class="dish-mono">45J</span></div>
         <h3>Steaks maturés</h3>
         <p>Pièces sélectionnées, affinées sur place jusqu'à 45 jours en chambre froide dédiée.</p>
       </div>
       <div class="dish" data-reveal data-d="1">
-        <div class="dish-hex">[ photo ]</div>
+        <div class="dish-hex"><span class="dish-mono">Grill</span></div>
         <h3>Ribs fondants</h3>
         <p>Cuisson lente à basse température, glaçage maison.</p>
       </div>
       <div class="dish" data-reveal data-d="2">
-        <div class="dish-hex">[ photo ]</div>
+        <div class="dish-hex"><span class="dish-mono">Local</span></div>
         <h3>Sélection artisanale</h3>
         <p>Produits sourcés auprès de fermes et artisans locaux, saison après saison.</p>
       </div>
@@ -475,56 +532,137 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
   </div>
 </section>
 
-<section id="fidelite" class="section-alt">
-  <div class="wrap">
-    <div class="section-head" data-reveal>
-      <p class="section-eyebrow">Fidélité</p>
-      <h2>Le Club La Ruche</h2>
-      <p>Chaque visite compte. Après 10 passages, un dessert est offert par la maison.</p>
-    </div>
-    <div class="loyalty-card" data-reveal data-d="0">
-      <div class="loyalty-stamps" id="loyaltyStamps"></div>
-      <p class="loyalty-status" id="loyaltyStatus"></p>
-    </div>
-    <form class="loyalty-form" id="loyaltyForm" data-reveal data-d="1">
-      <input type="email" id="loyaltyEmail" placeholder="vous@exemple.be" aria-label="Email" required>
-      <button type="submit" class="btn btn-primary">Rejoindre le Club</button>
-    </form>
-  </div>
-</section>
-
-<section id="cadeaux">
-  <div class="wrap">
-    <div class="section-head" data-reveal>
-      <p class="section-eyebrow">Bons cadeaux</p>
-      <h2>Offrez un moment La Ruche</h2>
-      <p>Valable 1 an, envoyé par email, utilisable à table sur simple présentation.</p>
-    </div>
-    <div class="giftcard-box" data-reveal data-d="0">
-      <div class="giftcard-amounts" id="giftAmounts">
-        <button type="button" class="amount-btn" data-amount="25">25€</button>
-        <button type="button" class="amount-btn is-selected" data-amount="50">50€</button>
-        <button type="button" class="amount-btn" data-amount="100">100€</button>
-        <input type="number" id="customAmount" placeholder="Autre montant" min="10">
-      </div>
-      <form class="gift-form" id="giftForm">
-        <div class="form-row">
-          <div><label for="giftTo">Pour</label><input id="giftTo" type="text" placeholder="Nom du destinataire"></div>
-          <div><label for="giftEmail">Email du destinataire</label><input id="giftEmail" type="email" placeholder="vous@exemple.be"></div>
-        </div>
-        <div><label for="giftMsg">Message (optionnel)</label><textarea id="giftMsg" placeholder="Joyeux anniversaire !"></textarea></div>
-        <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Offrir ce bon — <span id="giftAmountLabel">50€</span></button>
-      </form>
-    </div>
-  </div>
-</section>
-
 <div class="testimonial">
   <div class="wrap" data-reveal>
     <blockquote>« Le genre d'endroit où on prévoit de rester une heure et où on repart trois heures plus tard. Le bar en marbre à lui seul vaut le déplacement. »</blockquote>
     <cite>— Client, dîner en semaine, Bruxelles</cite>
   </div>
 </div>
+
+<section id="fidelite">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <p class="section-eyebrow">Programme fidélité</p>
+      <h2>Chaque visite compte</h2>
+      <p>Vos clients cumulent des passages sur une carte digitale. À la 10<sup>e</sup> visite, un dessert est offert — une vraie raison de revenir plutôt que d'aller ailleurs.</p>
+    </div>
+
+    <div class="loyalty-grid">
+      <div class="loyalty-card" data-reveal data-d="0">
+        <div class="loyalty-card-top">
+          <span class="loyalty-card-brand">La <span>Ruche</span></span>
+          <span class="loyalty-chip"></span>
+        </div>
+        <div class="loyalty-card-mid">
+          MEMBRE FIDÉLITÉ
+          <div class="loyalty-card-name">Client démo</div>
+        </div>
+        <div class="loyalty-card-bottom">
+          <span class="loyalty-progress-label">Passages</span>
+          <span class="loyalty-progress-num" id="loyaltyCount">4/10</span>
+        </div>
+      </div>
+
+      <div data-reveal data-d="1">
+        <div class="stamp-row" id="stampRow"></div>
+        <p class="loyalty-reward" id="loyaltyReward">Encore <strong>6 visites</strong> avant un dessert offert.</p>
+        <button type="button" class="btn btn-ghost" id="addVisitBtn">+ Ajouter une visite (démo)</button>
+        <p class="loyalty-hint">Démo interactive — sur le vrai site, le tampon s'ajoute automatiquement à chaque passage en caisse, pas de bouton à cliquer pour le client.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cadeaux" class="section-alt">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <p class="section-eyebrow">Bons cadeaux</p>
+      <h2>Offrez La Ruche</h2>
+      <p>Vendus directement en ligne, envoyés par email — un revenu direct, sans effort supplémentaire de votre part.</p>
+    </div>
+
+    <div class="gift-grid" data-reveal data-d="0">
+      <div class="gift-card" data-amount="25"><p class="gift-amount">25€</p><p class="gift-label">Bon cadeau</p></div>
+      <div class="gift-card" data-amount="50"><p class="gift-amount">50€</p><p class="gift-label">Bon cadeau</p></div>
+      <div class="gift-card" data-amount="100"><p class="gift-amount">100€</p><p class="gift-label">Bon cadeau</p></div>
+      <div class="gift-card" data-amount="custom">
+        <p class="gift-amount">Libre</p>
+        <input type="number" class="gift-custom-input" id="giftCustomAmount" placeholder="€" min="5" max="500">
+        <p class="gift-label">Montant libre</p>
+      </div>
+    </div>
+
+    <form class="gift-form" id="giftForm" data-reveal data-d="1">
+      <div class="form-row">
+        <div>
+          <label for="giftFromName">Votre nom</label>
+          <input id="giftFromName" type="text" placeholder="Votre nom">
+        </div>
+        <div>
+          <label for="giftToEmail">Email du destinataire</label>
+          <input id="giftToEmail" type="email" placeholder="destinataire@exemple.be">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="align-self:flex-start;" id="giftSubmitBtn">Offrir ce bon cadeau</button>
+      <p class="gift-trust">Paiement sécurisé par Bancontact ou carte — bon valable 1 an, envoyé par email au destinataire.</p>
+    </form>
+  </div>
+</section>
+
+<section id="evenements">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <p class="section-eyebrow">Événements privés</p>
+      <h2>Anniversaires, mariages, entreprises</h2>
+      <p>Ces demandes sont souvent les plus rentables — et les plus faciles à perdre si elles arrivent juste par téléphone un soir de rush.</p>
+    </div>
+
+    <div class="event-grid">
+      <form id="eventForm" data-reveal data-d="0">
+        <div class="event-types" id="eventTypes">
+          <span class="event-type" data-type="Anniversaire">🎂 Anniversaire</span>
+          <span class="event-type" data-type="Mariage">💍 Mariage</span>
+          <span class="event-type" data-type="Entreprise">🏢 Entreprise</span>
+          <span class="event-type" data-type="Autre">✨ Autre</span>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="eventName">Nom</label>
+            <input id="eventName" type="text" placeholder="Votre nom">
+          </div>
+          <div>
+            <label for="eventGuests">Nombre d'invités</label>
+            <input id="eventGuests" type="number" min="1" placeholder="Ex. 25">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="eventDate">Date souhaitée</label>
+            <input id="eventDate" type="date">
+          </div>
+          <div>
+            <label for="eventContact">Email ou téléphone</label>
+            <input id="eventContact" type="text" placeholder="vous@exemple.be ou +32...">
+          </div>
+        </div>
+        <div>
+          <label for="eventMessage">Votre projet</label>
+          <textarea id="eventMessage" rows="3" placeholder="Quelques détails sur l'événement..." style="width:100%; font-family:var(--font-body); font-size:0.95rem; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); color:var(--ink); resize:vertical;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start; margin-top:16px;" id="eventSubmitBtn">Envoyer la demande</button>
+      </form>
+
+      <div data-reveal data-d="1">
+        <ul class="event-perks">
+          <li>Salle privatisable jusqu'à 40 personnes</li>
+          <li>Menu sur mesure adapté à votre budget</li>
+          <li>Un interlocuteur dédié du premier contact au jour J</li>
+          <li>Réponse sous 24h, devis gratuit et sans engagement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="reservation" class="section-alt">
   <div class="wrap">
@@ -555,7 +693,7 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
 
         <div class="control-block">
           <label for="partySize">Nombre de personnes</label>
-          <input id="partySize" type="number" min="1" max="12" value="2">
+          <input id="partySize" type="number" min="1" max="10" value="2">
         </div>
       </div>
 
@@ -567,22 +705,12 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
         </div>
         <svg class="floorplan" id="floorplan" viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg">
           <rect class="plan-wall" x="20" y="20" width="600" height="380" rx="6"/>
-
-          <!-- Toilettes : tout au fond à gauche -->
-          <rect class="plan-room" x="40" y="40" width="90" height="55"/>
-          <text class="plan-label" x="85" y="72" text-anchor="middle">WC</text>
-
-          <!-- Bar : sur toute la longueur, côté gauche en entrant -->
-          <rect class="plan-bar" x="40" y="105" width="90" height="275" rx="3"/>
-          <text class="plan-label" x="85" y="243" text-anchor="middle" transform="rotate(-90 85 243)">Bar</text>
-
-          <!-- Cuisine : tout au fond à droite -->
-          <rect class="plan-room" x="480" y="40" width="120" height="70"/>
-          <text class="plan-label" x="540" y="79" text-anchor="middle">Cuisine</text>
-
-          <!-- Entrée / sortie : côté opposé à la cuisine et au fond -->
+          <rect class="plan-bar" x="40" y="40" width="170" height="55" rx="3"/>
+          <text class="plan-label" x="125" y="72" text-anchor="middle">Bar</text>
+          <rect class="plan-room" x="520" y="40" width="80" height="60"/>
+          <text class="plan-label" x="560" y="74" text-anchor="middle">WC</text>
           <rect class="plan-door" x="290" y="396" width="70" height="8"/>
-          <text class="plan-label" x="325" y="416" text-anchor="middle">Entrée</text>
+          <text class="plan-label" x="325" y="416" text-anchor="middle">Sortie</text>
         </svg>
         <p class="plan-hint">Choisissez d'abord une date, un horaire et le nombre de personnes — les tables trop petites ou déjà prises pour ce créneau apparaissent grisées.</p>
       </div>
@@ -608,48 +736,6 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
         <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Continuer vers le paiement de l'acompte</button>
       </form>
     </div>
-  </div>
-</section>
-
-<section id="privatisation" class="section-alt">
-  <div class="wrap">
-    <div class="section-head" data-reveal>
-      <p class="section-eyebrow">Événements privés</p>
-      <h2>Privatisez La Ruche</h2>
-      <p>Anniversaire, mariage, événement d'entreprise — on adapte le menu et la salle à votre événement. Réponse sous 48h.</p>
-    </div>
-    <form class="privatisation-form" id="privatisationForm" data-reveal data-d="0">
-      <div class="form-row">
-        <div>
-          <label for="eventType">Type d'événement</label>
-          <select id="eventType">
-            <option>Anniversaire</option>
-            <option>Mariage</option>
-            <option>Événement d'entreprise</option>
-            <option>Autre</option>
-          </select>
-        </div>
-        <div>
-          <label for="eventGuests">Nombre d'invités</label>
-          <input id="eventGuests" type="number" min="10" placeholder="30">
-        </div>
-      </div>
-      <div class="form-row">
-        <div>
-          <label for="eventDate">Date souhaitée</label>
-          <input id="eventDate" type="date">
-        </div>
-        <div>
-          <label for="eventContact">Email</label>
-          <input id="eventContact" type="email" placeholder="vous@exemple.be">
-        </div>
-      </div>
-      <div>
-        <label for="eventMsg">Votre projet</label>
-        <textarea id="eventMsg" placeholder="Décrivez brièvement votre événement..."></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Envoyer la demande</button>
-    </form>
   </div>
 </section>
 
@@ -735,12 +821,16 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
      pas de ce tableau codé en dur.
      =================================================================== */
   var TABLES = [
-    { id:'t1', cap:4,  type:'circle', r:22, cx:520, cy:150, taken:['19:00','19:30'] },
-    { id:'t2', cap:4,  type:'circle', r:22, cx:520, cy:200, taken:[] },
-    { id:'t3', cap:4,  type:'circle', r:22, cx:520, cy:250, taken:['20:00','20:30','21:00'] },
-    { id:'t4', cap:4,  type:'circle', r:22, cx:520, cy:300, taken:[] },
-    { id:'t5', cap:4,  type:'circle', r:22, cx:520, cy:350, taken:['18:30','19:00'] },
-    { id:'t6', cap:12, type:'capsule-v', w:50, h:190, cx:280, cy:220, taken:['20:00','20:30'] }
+    { id:'t1', cap:2,  cx:80,  cy:140, taken:['19:00','19:30','20:00'] },
+    { id:'t2', cap:2,  cx:80,  cy:220, taken:['20:30','21:00'] },
+    { id:'t3', cap:2,  cx:80,  cy:300, taken:[] },
+    { id:'t4', cap:2,  cx:560, cy:150, taken:['18:30','19:00'] },
+    { id:'t5', cap:4,  cx:210, cy:130, taken:['20:00','20:30','21:00'] },
+    { id:'t6', cap:4,  cx:330, cy:110, taken:[] },
+    { id:'t7', cap:4,  cx:450, cy:140, taken:['19:30','20:00'] },
+    { id:'t8', cap:4,  cx:230, cy:260, taken:['21:30','22:00'] },
+    { id:'t9', cap:4,  cx:420, cy:260, taken:[] },
+    { id:'t10',cap:10, cx:320, cy:330, taken:['18:00','18:30','19:00','19:30'] }
   ];
   var SLOTS = ['18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00','23:30','00:00','00:30','01:00'];
   var MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -818,14 +908,13 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
       g.setAttribute('transform', 'translate(' + t.cx + ',' + t.cy + ')');
 
       var shape;
-      if(t.type === 'capsule-v'){
+      if(t.cap === 10){
         shape = document.createElementNS(ns, 'rect');
-        shape.setAttribute('x', String(-t.w / 2)); shape.setAttribute('y', String(-t.h / 2));
-        shape.setAttribute('width', String(t.w)); shape.setAttribute('height', String(t.h));
-        shape.setAttribute('rx', String(t.w / 2));
+        shape.setAttribute('x', '-55'); shape.setAttribute('y', '-20');
+        shape.setAttribute('width', '110'); shape.setAttribute('height', '40'); shape.setAttribute('rx', '20');
       } else {
         shape = document.createElementNS(ns, 'circle');
-        shape.setAttribute('r', String(t.r));
+        shape.setAttribute('r', t.cap === 4 ? '24' : '18');
       }
       shape.setAttribute('class', 'table-shape');
       g.appendChild(shape);
@@ -883,65 +972,218 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
     }
   }
 
-  bookingForm.addEventListener('submit', function(e){
+  bookingForm.addEventListener('submit', async function(e){
     e.preventDefault();
-    summaryText.textContent = 'Demande enregistrée — vous seriez maintenant redirigé vers le paiement sécurisé de l\'acompte.';
-    bookingForm.hidden = true;
+    var submitBtn = bookingForm.querySelector('button[type="submit"]');
+    var originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Redirection vers le paiement…';
+
+    var payload = {
+      date: selectedDate ? selectedDate.toISOString().slice(0, 10) : null,
+      slot: selectedSlot,
+      table: selectedTable ? selectedTable.id : null,
+      party: partySizeInput.value,
+      name: document.getElementById('bookName').value,
+      phone: document.getElementById('bookPhone').value,
+      email: document.getElementById('bookEmail').value
+    };
+
+    try {
+      var res = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+      if(!res.ok || !data.checkoutUrl){ throw new Error(data.error || 'Erreur inconnue'); }
+      window.location.href = data.checkoutUrl;
+    } catch(err){
+      summaryText.textContent = "Une erreur est survenue pendant la préparation du paiement. Merci de réessayer, ou de nous appeler directement si le problème persiste.";
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
   });
+
+  /* ---- Retour après paiement Mollie (redirectUrl) ----
+     Attention : ce message est optimiste (affiché dès le retour sur le
+     site), Mollie redirige même si le client annule. La confirmation
+     qui fait foi est le webhook (mollie-webhook), traité côté serveur.
+     À terme, on peut interroger l'API pour vérifier le vrai statut
+     avant d'afficher ce message. ---- */
+  (function checkPaymentReturn(){
+    var params = new URLSearchParams(window.location.search);
+    if(params.get('status') === 'merci' && params.get('booking')){
+      summaryText.innerHTML = '✓ Réservation confirmée — référence ' + params.get('booking') + '.<br><span style="font-size:0.85rem;opacity:.8;">Un email de confirmation vous a été envoyé.</span>';
+      bookingForm.hidden = true;
+    }
+  })();
+  // Le retour "bon cadeau" (?gift=...&status=merci) est géré plus bas,
+  // dans le script des sections fidélité/cadeaux/événements.
 
   renderCalendar();
   buildTables();
-  updateTableStates();
 
-  /* ---- Fidélité ---- */
-  var LOYALTY_TOTAL = 10;
-  var LOYALTY_VISITS = 6; // exemple de démo — viendrait du compte client en production
-  var stampsEl = document.getElementById('loyaltyStamps');
-  var statusEl = document.getElementById('loyaltyStatus');
-  for(var i = 1; i <= LOYALTY_TOTAL; i++){
-    var s = document.createElement('span');
-    s.className = 'stamp' + (i <= LOYALTY_VISITS ? ' is-filled' : '');
-    stampsEl.appendChild(s);
-  }
-  var remaining = LOYALTY_TOTAL - LOYALTY_VISITS;
-  statusEl.textContent = LOYALTY_VISITS + ' visites sur ' + LOYALTY_TOTAL + ' — encore ' + remaining + (remaining > 1 ? ' visites' : ' visite') + ' avant votre dessert offert.';
-
-  document.getElementById('loyaltyForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    statusEl.textContent = 'Bienvenue dans le Club La Ruche — votre carte de fidélité vous attend par email.';
-    this.hidden = true;
+  /* Pré-remplissage démo : ouvre directement sur un samedi proche, 20h —
+     évite de devoir cliquer date + horaire à vide avant que le plan
+     de salle ait l'air vivant. Le prospect peut toujours tout changer. */
+  var demoDate = new Date(today);
+  var daysToSaturday = (6 - demoDate.getDay() + 7) % 7 || 7;
+  demoDate.setDate(demoDate.getDate() + daysToSaturday);
+  selectedDate = demoDate;
+  selectedSlot = '20:00';
+  viewDate = new Date(demoDate.getFullYear(), demoDate.getMonth(), 1);
+  renderCalendar();
+  slotGrid.querySelectorAll('.slot-btn').forEach(function(b){
+    if(b.textContent === selectedSlot){ b.classList.add('is-selected'); }
   });
 
-  /* ---- Bons cadeaux ---- */
-  var selectedGiftAmount = 50;
-  var giftAmountLabel = document.getElementById('giftAmountLabel');
-  var customAmountInput = document.getElementById('customAmount');
-  document.querySelectorAll('.amount-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.amount-btn').forEach(function(b){ b.classList.remove('is-selected'); });
-      btn.classList.add('is-selected');
-      selectedGiftAmount = parseInt(btn.getAttribute('data-amount'), 10);
-      customAmountInput.value = '';
-      giftAmountLabel.textContent = selectedGiftAmount + '€';
+  updateTableStates();
+})();
+</script>
+
+<script>
+(function(){
+  /* ===================================================================
+     FIDÉLITÉ — démo purement client-side (le compteur repart de zéro
+     au rechargement). En production, le nombre de passages viendrait
+     d'une vraie base liée au client (email/téléphone), pas d'un state
+     JS local remis à zéro à chaque visite du site.
+     =================================================================== */
+  var TOTAL_STAMPS = 10;
+  var stampCount = 4; // point de départ démo — carte "déjà engagée", plus parlant en RDV
+  var stampRow = document.getElementById('stampRow');
+  var loyaltyCountEl = document.getElementById('loyaltyCount');
+  var loyaltyRewardEl = document.getElementById('loyaltyReward');
+  var addVisitBtn = document.getElementById('addVisitBtn');
+
+  function renderStamps(justAdded){
+    stampRow.innerHTML = '';
+    for(var i = 1; i <= TOTAL_STAMPS; i++){
+      var s = document.createElement('span');
+      s.className = 'stamp' + (i <= stampCount ? ' is-filled' : '') + (i === stampCount && justAdded ? ' is-pop' : '');
+      s.textContent = i <= stampCount ? '✓' : i;
+      stampRow.appendChild(s);
+    }
+    loyaltyCountEl.textContent = stampCount + '/' + TOTAL_STAMPS;
+    if(stampCount >= TOTAL_STAMPS){
+      loyaltyRewardEl.innerHTML = '🎉 <strong>Dessert offert débloqué</strong> — carte relancée à la prochaine visite.';
+    } else {
+      var remaining = TOTAL_STAMPS - stampCount;
+      loyaltyRewardEl.innerHTML = 'Encore <strong>' + remaining + ' visite' + (remaining > 1 ? 's' : '') + '</strong> avant un dessert offert.';
+    }
+  }
+
+  addVisitBtn.addEventListener('click', function(){
+    stampCount = stampCount >= TOTAL_STAMPS ? 1 : stampCount + 1;
+    renderStamps(true);
+  });
+
+  renderStamps(false);
+
+  /* ===================================================================
+     BONS CADEAUX — sélection d'un montant puis vrai paiement Mollie,
+     via la même fonction Azure /api/create-payment que la réservation
+     (généralisée avec un champ "type": "giftcard").
+     =================================================================== */
+  var giftCards = document.querySelectorAll('.gift-card');
+  var giftCustomInput = document.getElementById('giftCustomAmount');
+  var selectedGiftAmount = null;
+  var giftForm = document.getElementById('giftForm');
+
+  giftCards.forEach(function(card){
+    card.addEventListener('click', function(){
+      giftCards.forEach(function(c){ c.classList.remove('is-selected'); });
+      card.classList.add('is-selected');
+      if(card.dataset.amount === 'custom'){
+        giftCustomInput.focus();
+        selectedGiftAmount = parseInt(giftCustomInput.value, 10) || null;
+      } else {
+        selectedGiftAmount = parseInt(card.dataset.amount, 10);
+      }
     });
   });
-  customAmountInput.addEventListener('input', function(){
-    if(this.value){
-      document.querySelectorAll('.amount-btn').forEach(function(b){ b.classList.remove('is-selected'); });
-      selectedGiftAmount = parseInt(this.value, 10) || 0;
-      giftAmountLabel.textContent = selectedGiftAmount + '€';
+  giftCustomInput.addEventListener('input', function(){
+    var customCard = giftCustomInput.closest('.gift-card');
+    giftCards.forEach(function(c){ c.classList.remove('is-selected'); });
+    customCard.classList.add('is-selected');
+    selectedGiftAmount = parseInt(giftCustomInput.value, 10) || null;
+  });
+  giftCustomInput.addEventListener('click', function(e){ e.stopPropagation(); });
+
+  (function checkGiftReturn(){
+    var params = new URLSearchParams(window.location.search);
+    if(params.get('status') === 'merci' && params.get('gift')){
+      giftForm.innerHTML = '<p style="font-size:0.95rem;">✓ <strong>Merci !</strong> Votre bon cadeau (réf. ' + params.get('gift') + ') a bien été payé — il sera envoyé par email au destinataire.</p>';
+    }
+  })();
+
+  giftForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var submitBtn = document.getElementById('giftSubmitBtn');
+    var originalLabel = submitBtn.textContent;
+
+    if(!selectedGiftAmount || selectedGiftAmount < 5){
+      submitBtn.textContent = 'Choisissez un montant valide (min. 5€)';
+      setTimeout(function(){ submitBtn.textContent = originalLabel; }, 2200);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Redirection vers le paiement…';
+
+    var payload = {
+      type: 'giftcard',
+      amount: selectedGiftAmount,
+      fromName: document.getElementById('giftFromName').value,
+      toEmail: document.getElementById('giftToEmail').value
+    };
+
+    try {
+      var res = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+      if(!res.ok || !data.checkoutUrl){ throw new Error(data.error || 'Erreur inconnue'); }
+      window.location.href = data.checkoutUrl;
+    } catch(err){
+      submitBtn.textContent = "Erreur — réessayez ou appelez-nous directement.";
+      submitBtn.disabled = false;
+      setTimeout(function(){ submitBtn.textContent = originalLabel; }, 2600);
     }
   });
-  document.getElementById('giftForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    var box = document.querySelector('.giftcard-box');
-    box.innerHTML = '<p class="loyalty-status">Bon cadeau de ' + selectedGiftAmount + '€ prêt à être envoyé — il ne manque plus que le paiement sécurisé pour le confirmer.</p>';
+
+  /* ===================================================================
+     ÉVÉNEMENTS PRIVÉS — capture de lead. Pas de paiement ici, juste un
+     formulaire qui doit arriver quelque part (email/CRM) au lieu de se
+     perdre dans un appel un soir de rush. Le TODO ci-dessous indique où
+     brancher un vrai envoi (fonction Azure + email) : pour l'instant la
+     démo simule juste la confirmation.
+     =================================================================== */
+  var eventTypesWrap = document.getElementById('eventTypes');
+  var selectedEventType = null;
+  eventTypesWrap.querySelectorAll('.event-type').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      eventTypesWrap.querySelectorAll('.event-type').forEach(function(c){ c.classList.remove('is-selected'); });
+      chip.classList.add('is-selected');
+      selectedEventType = chip.dataset.type;
+    });
   });
 
-  /* ---- Privatisation ---- */
-  document.getElementById('privatisationForm').addEventListener('submit', function(e){
+  var eventForm = document.getElementById('eventForm');
+  eventForm.addEventListener('submit', function(e){
     e.preventDefault();
-    this.innerHTML = '<p class="loyalty-status">Demande envoyée — l\'équipe de La Ruche revient vers vous sous 48h avec une proposition.</p>';
+    var submitBtn = document.getElementById('eventSubmitBtn');
+
+    // TODO production : POST vers une fonction Azure dédiée (ex. /api/event-request)
+    // qui enregistre la demande et envoie un email/SMS à Zakaria — pour l'instant
+    // rien n'est transmis nulle part, c'est une confirmation de démo uniquement.
+
+    submitBtn.textContent = '✓ Demande envoyée — on vous recontacte sous 24h';
+    submitBtn.disabled = true;
+    eventForm.querySelectorAll('input, textarea').forEach(function(el){ el.disabled = true; });
   });
 })();
 </script>
