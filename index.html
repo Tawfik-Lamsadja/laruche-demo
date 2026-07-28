@@ -1016,6 +1016,7 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
     if(params.get('status') === 'merci' && params.get('booking')){
       summaryText.innerHTML = '✓ Réservation confirmée — référence ' + params.get('booking') + '.<br><span style="font-size:0.85rem;opacity:.8;">Un email de confirmation vous a été envoyé.</span>';
       bookingForm.hidden = true;
+      document.getElementById('reservation').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   })();
   // Le retour "bon cadeau" (?gift=...&status=merci) est géré plus bas,
@@ -1115,6 +1116,7 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
     var params = new URLSearchParams(window.location.search);
     if(params.get('status') === 'merci' && params.get('gift')){
       giftForm.innerHTML = '<p style="font-size:0.95rem;">✓ <strong>Merci !</strong> Votre bon cadeau (réf. ' + params.get('gift') + ') a bien été payé — il sera envoyé par email au destinataire.</p>';
+      document.getElementById('cadeaux').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   })();
 
