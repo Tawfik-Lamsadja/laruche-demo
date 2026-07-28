@@ -1060,7 +1060,7 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
       if(!res.ok || !data.checkoutUrl){ throw new Error(data.error || 'Erreur inconnue'); }
       window.location.href = data.checkoutUrl;
     } catch(err){
-      summaryText.textContent = "Une erreur est survenue pendant la préparation du paiement. Merci de réessayer, ou de nous appeler directement si le problème persiste.";
+      summaryText.textContent = "Erreur : " + (err.message || "problème inconnu") + ". Merci de réessayer, ou de nous appeler directement si ça persiste.";
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
     }
@@ -1218,9 +1218,9 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
       if(!res.ok || !data.checkoutUrl){ throw new Error(data.error || 'Erreur inconnue'); }
       window.location.href = data.checkoutUrl;
     } catch(err){
-      submitBtn.textContent = "Erreur — réessayez ou appelez-nous directement.";
+      submitBtn.textContent = "Erreur : " + (err.message || "problème inconnu");
       submitBtn.disabled = false;
-      setTimeout(function(){ submitBtn.textContent = originalLabel; }, 2600);
+      setTimeout(function(){ submitBtn.textContent = originalLabel; }, 3200);
     }
   });
 
