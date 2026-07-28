@@ -429,6 +429,16 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
 </head>
 <body class="is-loading">
 
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-card">
+    <div class="confirm-icon">✓</div>
+    <h3 id="confirmTitle">À bientôt !</h3>
+    <p id="confirmMessage"></p>
+    <p class="confirm-ref" id="confirmRef"></p>
+    <button type="button" class="btn btn-primary" id="confirmCloseBtn">Retour à l'accueil</button>
+  </div>
+</div>
+
 <!-- ===================================================================
      ÉCRAN DE CHARGEMENT — une abeille qui tourne autour d'une alvéole,
      clin d'œil direct au nom "La Ruche". Chaque client peut avoir son
@@ -1246,16 +1256,6 @@ footer{ border-top: 1px solid var(--line); padding: 40px 0; }
   });
 })();
 </script>
-
-<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-  <div class="confirm-card">
-    <div class="confirm-icon">✓</div>
-    <h3 id="confirmTitle">À bientôt !</h3>
-    <p id="confirmMessage"></p>
-    <p class="confirm-ref" id="confirmRef"></p>
-    <button type="button" class="btn btn-primary" id="confirmCloseBtn">Retour à l'accueil</button>
-  </div>
-</div>
 
 </body>
 </html>
